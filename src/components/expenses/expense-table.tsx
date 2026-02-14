@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { useCurrency } from "@/hooks/use-currency";
 import type { Expense } from "@/lib/types";
 import { toast } from "sonner";
 
@@ -28,6 +29,7 @@ interface ExpenseTableProps {
 
 export function ExpenseTable({ expenses, sortBy, sortOrder, onSort }: ExpenseTableProps) {
   const router = useRouter();
+  const currency = useCurrency();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
@@ -98,7 +100,12 @@ export function ExpenseTable({ expenses, sortBy, sortOrder, onSort }: ExpenseTab
                 <TableCell>{formatDate(expense.date)}</TableCell>
                 <TableCell>
                   <div>
-                    <span className="font-medium">{expense.vendor}</span>
+                    <span className="font-medium">
+                      {expense.vendor}
+                      {expense.receipt_id && (
+                        <Receipt className="inline ml-1.5 h-3.5 w-3.5 text-muted-foreground" />
+                      )}
+                    </span>
                     {expense.description && (
                       <p className="text-sm text-muted-foreground truncate max-w-[200px]">
                         {expense.description}
@@ -119,7 +126,7 @@ export function ExpenseTable({ expenses, sortBy, sortOrder, onSort }: ExpenseTab
                   )}
                 </TableCell>
                 <TableCell className="text-right font-medium">
-                  {formatCurrency(expense.amount)}
+                  {formatCurrency(expense.amount, currency)}
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-1">
@@ -145,10 +152,15 @@ export function ExpenseTable({ expenses, sortBy, sortOrder, onSort }: ExpenseTab
           <div key={expense.id} className="border rounded-lg p-4 space-y-2">
             <div className="flex items-start justify-between">
               <div>
-                <p className="font-medium">{expense.vendor}</p>
+                <p className="font-medium">
+                  {expense.vendor}
+                  {expense.receipt_id && (
+                    <Receipt className="inline ml-1.5 h-3.5 w-3.5 text-muted-foreground" />
+                  )}
+                </p>
                 <p className="text-sm text-muted-foreground">{formatDate(expense.date)}</p>
               </div>
-              <p className="font-semibold">{formatCurrency(expense.amount)}</p>
+              <p className="font-semibold">{formatCurrency(expense.amount, currency)}</p>
             </div>
             {expense.category && (
               <Badge

@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
+import { useCurrency } from "@/hooks/use-currency";
 import {
   PieChart,
   Pie,
@@ -17,6 +18,7 @@ interface CategoryBreakdownProps {
 }
 
 export function CategoryBreakdown({ data }: CategoryBreakdownProps) {
+  const currency = useCurrency();
   return (
     <Card>
       <CardHeader>
@@ -45,7 +47,7 @@ export function CategoryBreakdown({ data }: CategoryBreakdownProps) {
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(value) => formatCurrency(Number(value))}
+                  formatter={(value) => formatCurrency(Number(value), currency)}
                   contentStyle={{
                     backgroundColor: "var(--popover)",
                     border: "1px solid var(--border)",
@@ -66,7 +68,7 @@ export function CategoryBreakdown({ data }: CategoryBreakdownProps) {
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-muted-foreground">{cat.percentage.toFixed(1)}%</span>
-                    <span className="font-medium">{formatCurrency(cat.total)}</span>
+                    <span className="font-medium">{formatCurrency(cat.total, currency)}</span>
                   </div>
                 </div>
               ))}

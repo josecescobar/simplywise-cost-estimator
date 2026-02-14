@@ -5,6 +5,7 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { MobileBottomNav, MobileSidebar } from "@/components/layout/mobile-nav";
 import { createClient } from "@/lib/supabase/client";
+import { CurrencyProvider } from "@/hooks/use-currency";
 import type { Profile } from "@/lib/types";
 
 export default function DashboardLayout({
@@ -32,19 +33,21 @@ export default function DashboardLayout({
   }, []);
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      <MobileSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+    <CurrencyProvider currency={profile?.currency || "USD"}>
+      <div className="flex h-screen overflow-hidden">
+        <Sidebar />
+        <MobileSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <Header profile={profile} onMenuClick={() => setSidebarOpen(true)} />
+        <div className="flex flex-1 flex-col overflow-hidden">
+          <Header profile={profile} onMenuClick={() => setSidebarOpen(true)} />
 
-        <main className="flex-1 overflow-y-auto p-4 lg:p-6 pb-20 lg:pb-6">
-          {children}
-        </main>
+          <main className="flex-1 overflow-y-auto p-4 lg:p-6 pb-20 lg:pb-6">
+            {children}
+          </main>
+        </div>
+
+        <MobileBottomNav />
       </div>
-
-      <MobileBottomNav />
-    </div>
+    </CurrencyProvider>
   );
 }

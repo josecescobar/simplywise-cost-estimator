@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
+import { useCurrency } from "@/hooks/use-currency";
 import {
   AreaChart,
   Area,
@@ -18,6 +19,7 @@ interface SpendingChartProps {
 }
 
 export function SpendingChart({ data }: SpendingChartProps) {
+  const currency = useCurrency();
   const formattedData = data.map((d) => ({
     ...d,
     label: new Date(d.month + "-01").toLocaleDateString("en-US", {
@@ -50,10 +52,10 @@ export function SpendingChart({ data }: SpendingChartProps) {
               <YAxis
                 className="text-xs"
                 tick={{ fill: 'currentColor' }}
-                tickFormatter={(value) => `$${value}`}
+                tickFormatter={(value) => formatCurrency(value, currency)}
               />
               <Tooltip
-                formatter={(value) => [formatCurrency(Number(value)), "Total"]}
+                formatter={(value) => [formatCurrency(Number(value), currency), "Total"]}
                 contentStyle={{
                   backgroundColor: "var(--popover)",
                   border: "1px solid var(--border)",

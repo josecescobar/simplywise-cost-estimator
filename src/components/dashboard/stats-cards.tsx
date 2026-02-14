@@ -3,6 +3,7 @@
 import { DollarSign, Receipt, TrendingUp, Tag } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
+import { useCurrency } from "@/hooks/use-currency";
 import type { DashboardStats } from "@/lib/types";
 
 interface StatsCardsProps {
@@ -10,10 +11,11 @@ interface StatsCardsProps {
 }
 
 export function StatsCards({ stats }: StatsCardsProps) {
+  const currency = useCurrency();
   const cards = [
     {
       title: "Total Spent",
-      value: formatCurrency(stats.total_spent),
+      value: formatCurrency(stats.total_spent, currency),
       icon: DollarSign,
       description: "All time total",
     },
@@ -25,7 +27,7 @@ export function StatsCards({ stats }: StatsCardsProps) {
     },
     {
       title: "Average Expense",
-      value: formatCurrency(stats.avg_expense),
+      value: formatCurrency(stats.avg_expense, currency),
       icon: TrendingUp,
       description: "Per transaction",
     },

@@ -12,8 +12,10 @@ import { CategoryBreakdown } from "@/components/dashboard/category-breakdown";
 import { StatsCards } from "@/components/dashboard/stats-cards";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/lib/utils";
+import { useCurrency } from "@/hooks/use-currency";
 
 export default function ReportsPage() {
+  const currency = useCurrency();
   const [dateFrom, setDateFrom] = useState(() => {
     const d = new Date();
     d.setMonth(d.getMonth() - 6);
@@ -148,7 +150,7 @@ export default function ReportsPage() {
                       <TableRow key={v.vendor}>
                         <TableCell className="font-medium">{v.vendor}</TableCell>
                         <TableCell className="text-right">{v.count}</TableCell>
-                        <TableCell className="text-right font-medium">{formatCurrency(v.total)}</TableCell>
+                        <TableCell className="text-right font-medium">{formatCurrency(v.total, currency)}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

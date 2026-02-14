@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import { expenseSchema, type ExpenseFormValues } from "@/lib/validations/expense";
 import type { Category, Tag, Expense } from "@/lib/types";
 import { toast } from "sonner";
@@ -19,9 +20,10 @@ interface ExpenseFormProps {
   expense?: Expense;
   categories: Category[];
   tags: Tag[];
+  className?: string;
 }
 
-export function ExpenseForm({ expense, categories, tags }: ExpenseFormProps) {
+export function ExpenseForm({ expense, categories, tags, className }: ExpenseFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const isEditing = !!expense;
@@ -102,7 +104,7 @@ export function ExpenseForm({ expense, categories, tags }: ExpenseFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
+    <form onSubmit={handleSubmit(onSubmit)} className={cn("space-y-6 max-w-2xl", className)}>
       <Card>
         <CardHeader>
           <CardTitle>{isEditing ? "Edit Expense" : "New Expense"}</CardTitle>

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import type { Tag } from "@/lib/types";
 import { toast } from "sonner";
 
@@ -20,6 +20,7 @@ export function TagManager({ tags: initialTags }: TagManagerProps) {
   const [newName, setNewName] = useState("");
   const [newColor, setNewColor] = useState("#3b82f6");
   const [loading, setLoading] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const handleAdd = async () => {
     if (!newName.trim()) return;
@@ -44,17 +45,20 @@ export function TagManager({ tags: initialTags }: TagManagerProps) {
     }
   };
 
-  const handleDelete = async (tagId: string) => {
+  const handleDelete = async () => {
+    if (!deleteId) return;
     try {
       await fetch(`/api/tags`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: tagId }),
+        body: JSON.stringify({ id: deleteId }),
       });
-      setTags(tags.filter((t) => t.id !== tagId));
+      setTags(tags.filter((t) => t.id !== deleteId));
       toast.success("Tag deleted!");
     } catch {
       toast.error("Failed to delete tag");
+    } finally {
+      setDeleteId(null);
     }
   };
 
@@ -87,7 +91,7 @@ export function TagManager({ tags: initialTags }: TagManagerProps) {
               >
                 {tag.name}
                 <button
-                  onClick={() => handleDelete(tag.id)}
+                  onClick={() => setDeleteId(tag.id)}
                   className="ml-1 rounded-full p-0.5 hover:bg-white/20 transition-colors"
                 >
                   <X className="h-3 w-3" />
@@ -132,6 +136,25 @@ export function TagManager({ tags: initialTags }: TagManagerProps) {
               <Button variant="outline" onClick={() => setShowAdd(false)}>Cancel</Button>
               <Button onClick={handleAdd} disabled={loading || !newName.trim()}>
                 Create
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete Tag</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this tag? It will be removed from all associated expenses.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDeleteId(null)}>
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={handleDelete}>
+                Delete
               </Button>
             </DialogFooter>
           </DialogContent>

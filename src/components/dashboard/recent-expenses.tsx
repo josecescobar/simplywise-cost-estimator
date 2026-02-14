@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { useCurrency } from "@/hooks/use-currency";
 import type { Expense } from "@/lib/types";
 
 interface RecentExpensesProps {
@@ -13,6 +14,7 @@ interface RecentExpensesProps {
 }
 
 export function RecentExpenses({ expenses }: RecentExpensesProps) {
+  const currency = useCurrency();
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -47,7 +49,7 @@ export function RecentExpenses({ expenses }: RecentExpensesProps) {
                     </p>
                   </div>
                 </div>
-                <span className="font-semibold text-sm">{formatCurrency(expense.amount)}</span>
+                <span className="font-semibold text-sm">{formatCurrency(expense.amount, currency)}</span>
               </div>
             ))}
           </div>
