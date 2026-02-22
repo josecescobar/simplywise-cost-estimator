@@ -5,7 +5,9 @@ import { StatsCards } from "@/components/dashboard/stats-cards";
 import { SpendingChart } from "@/components/dashboard/spending-chart";
 import { CategoryBreakdown } from "@/components/dashboard/category-breakdown";
 import { RecentExpenses } from "@/components/dashboard/recent-expenses";
+import { BudgetOverview } from "@/components/dashboard/budget-overview";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { BudgetStatus } from "@/lib/types";
 
 export default function DashboardPage() {
   const [data, setData] = useState<{
@@ -14,14 +16,20 @@ export default function DashboardPage() {
     by_month: { month: string; total: number; count: number }[];
     recent: Array<Record<string, unknown>>;
   } | null>(null);
+  const [budgets, setBudgets] = useState<BudgetStatus[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch("/api/reports");
-        const json = await res.json();
+        const [reportsRes, budgetsRes] = await Promise.all([
+          fetch("/api/reports"),
+          fetch("/api/budgets"),
+        ]);
+        const json = await reportsRes.json();
+        const budgetData = await budgetsRes.json();
         setData(json);
+        setBudgets(Array.isArray(budgetData) ? budgetData : []);
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
       } finally {
@@ -56,6 +64,8 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Dashboard</h1>
+
+      <BudgetOverview budgets={budgets} />
 
       <StatsCards stats={data.stats} />
 

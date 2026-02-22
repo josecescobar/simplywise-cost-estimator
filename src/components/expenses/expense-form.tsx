@@ -13,7 +13,7 @@ import { Select } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { expenseSchema, type ExpenseFormValues } from "@/lib/validations/expense";
-import type { Category, Tag, Expense } from "@/lib/types";
+import type { Category, Tag, Expense, BudgetStatus } from "@/lib/types";
 import { toast } from "sonner";
 
 interface ExpenseFormProps {
@@ -82,6 +82,27 @@ export function ExpenseForm({ expense, categories, tags, className }: ExpenseFor
       }
 
       toast.success(isEditing ? "Expense updated!" : "Expense created!");
+
+      // Check budget alerts
+      try {
+        const budgetRes = await fetch("/api/budgets");
+        if (budgetRes.ok) {
+          const statuses: BudgetStatus[] = await budgetRes.json();
+          for (const bs of statuses) {
+            const label = bs.budget.category_id
+              ? bs.budget.category?.name ?? "Category"
+              : "Overall";
+            if (bs.status === "exceeded") {
+              toast.warning(`Budget exceeded: ${label} is over limit`);
+            } else if (bs.status === "warning") {
+              toast.warning(`Approaching budget: ${label} is at ${Math.round(bs.percentage)}%`);
+            }
+          }
+        }
+      } catch {
+        // Budget check is non-critical, don't block the flow
+      }
+
       router.push("/expenses");
       router.refresh();
     } catch (error) {
